@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/user")
     public User createUser(@RequestBody User user) {
         user.setId(generateId());
-        if (validate(user)){
+        if (validate(user)) {
             users.put(user.getId(), user);
             log.info("Новый пользователь успешно зарегестрирован {}", user);
         }
@@ -35,7 +35,7 @@ public class UserController {
 
     @PutMapping("/user")
     public User updateUser(@RequestBody User user) {
-        if (validate(user)){
+        if (validate(user)) {
             users.put(user.getId(), user);
             log.info("Данные пользователя {} успешно обнавлены.", user);
         }
@@ -46,7 +46,7 @@ public class UserController {
         return ++id;
     }
 
-    private boolean validate(User user){
+    private boolean validate(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Почта не может быть пустой и должна содержать @");
         } else if (user.getLogin() == null || user.getLogin().isBlank()) {
