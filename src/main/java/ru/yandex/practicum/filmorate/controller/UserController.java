@@ -23,7 +23,7 @@ public class UserController {
         return users;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     public User createUser(@RequestBody User user) {
         user.setId(generateId());
         if (validate(user)) {
@@ -33,7 +33,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("/user")
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
         if (validate(user)) {
             users.put(user.getId(), user);
