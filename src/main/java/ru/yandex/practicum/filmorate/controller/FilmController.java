@@ -10,7 +10,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class FilmController {
@@ -21,8 +23,8 @@ public class FilmController {
 
 
     @GetMapping("/films")
-    public Map findAll() {
-        return films;
+    public List findAll() {
+        return films.values().stream().collect(Collectors.toList());
     }
 
     @PostMapping("/films")
