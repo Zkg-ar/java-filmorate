@@ -28,7 +28,7 @@ public class FilmControllerTest {
         film = Film.builder()
                 .name("Avengers.Infinity war")
                 .description("Фильм снятый по комиксам")
-                .duration(Duration.ofMinutes(120))
+                .duration(120)
                 .releaseDate(LocalDate.of(2018, 4, 29))
                 .build();
     }
@@ -55,7 +55,7 @@ public class FilmControllerTest {
         final ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> {
-                    film.setDuration(Duration.ZERO);
+                    film.setDuration(-100);
                     obj.createFilm(film);
                 });
         Assertions.assertEquals("Продолжительность фильма должна быть положительной.", exception.getMessage());
