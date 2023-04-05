@@ -27,8 +27,8 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {
-        user.setId(generateId());
         if (validate(user)) {
+            user.setId(generateId());
             users.put(user.getId(), user);
             log.info("Новый пользователь успешно зарегестрирован {}", user);
         }

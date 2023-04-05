@@ -29,8 +29,9 @@ public class FilmController {
 
     @PostMapping("/films")
     public Film createFilm(@RequestBody Film film) {
-        film.setId(generateId());
+
         if (validate(film)) {
+            film.setId(generateId());
             films.put(film.getId(), film);
             log.info("Новый пользователь успешно зарегестрирован {}", film);
         }
@@ -55,7 +56,7 @@ public class FilmController {
             throw new ValidationException("Название фильма не может быть пустым");
         } else if (film.getDescription().length() > 200) {
             throw new ValidationException("Описание фильма не может быть больше 200 символов");
-        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
+        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза не может быть раньше чем 28.12.1895");
         } else if (!film.getDuration().isNegative()) {
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
