@@ -50,6 +50,17 @@ public class FilmControllerTest {
         Assertions.assertEquals("Название фильма не может быть пустым", exception.getMessage());
     }
 
+    @Test
+    public void whenFilmDurationIsNegative() {
+        final ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> {
+                    film.setDuration(Duration.ZERO);
+                    obj.createFilm(film);
+                });
+        Assertions.assertEquals("Продолжительность фильма должна быть положительной.", exception.getMessage());
+    }
+
 
     @Test
     public void whenFilmReleaseFateIsBefore28121895() {

@@ -38,8 +38,11 @@ public class UserController {
     @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
         if (validate(user)) {
+            if (!users.containsKey(user.getId())) {
+                throw new ValidationException("Пользователь не найден.");
+            }
             users.put(user.getId(), user);
-            log.info("Данные пользователя {} успешно обнавлены.", user);
+            log.info("User {} updated", user);
         }
         return user;
     }
@@ -49,13 +52,14 @@ public class UserController {
     }
 
     private boolean validate(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Почта не может быть пустой и должна содержать @");
         } else if (user.getLogin() == null || user.getLogin().isBlank()) {
             throw new ValidationException("Логин пустой или содержит в себе пробелы");
-        } else if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+        } else if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
         return true;

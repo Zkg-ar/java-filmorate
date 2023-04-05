@@ -29,7 +29,6 @@ public class FilmController {
 
     @PostMapping("/films")
     public Film createFilm(@RequestBody Film film) {
-
         if (validate(film)) {
             film.setId(generateId());
             films.put(film.getId(), film);
@@ -41,8 +40,11 @@ public class FilmController {
     @PutMapping("/films")
     public Film updateFilm(@RequestBody Film film) {
         if (validate(film)) {
+            if (!films.containsKey(film.getId())) {
+                throw new ValidationException("Пользователь не найден.");
+            }
             films.put(film.getId(), film);
-            log.info("Данные пользователя {} успешно обнавлены.", film);
+            log.info("Film {} updated", film);
         }
         return film;
     }
@@ -52,13 +54,13 @@ public class FilmController {
     }
 
     private boolean validate(Film film) {
-        if (film.getName() == null || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isEmpty()) {
             throw new ValidationException("Название фильма не может быть пустым");
         } else if (film.getDescription().length() > 200) {
             throw new ValidationException("Описание фильма не может быть больше 200 символов");
-        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        } else if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза не может быть раньше чем 28.12.1895");
-        } else if (!film.getDuration().isNegative()) {
+        } else if (film.getDuration() < 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
         return true;
