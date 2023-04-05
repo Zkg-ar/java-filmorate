@@ -51,7 +51,7 @@ public class UserController {
             throw new ValidationException("Почта не может быть пустой и должна содержать @");
         } else if (user.getLogin() == null || user.getLogin().isBlank()) {
             throw new ValidationException("Логин пустой или содержит в себе пробелы");
-        } else if (user.getName() == null || user.getEmail().isBlank()) {
+        } else if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
