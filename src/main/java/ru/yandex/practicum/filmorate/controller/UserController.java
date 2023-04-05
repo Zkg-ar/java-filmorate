@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -19,8 +21,8 @@ public class UserController {
 
 
     @GetMapping("/users")
-    public Map findAll() {
-        return users;
+    public List findAll() {
+        return users.values().stream().collect(Collectors.toList());
     }
 
     @PostMapping("/users")
