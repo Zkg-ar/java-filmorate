@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -16,34 +17,34 @@ import java.util.stream.Collectors;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    Map<Integer, User> users = new HashMap();
+    private Map<Integer, User> users = new HashMap();
     private int id = 0;
 
 
     @GetMapping("/users")
-    public List findAll() {
+    public List getUsers() {
         return users.values().stream().collect(Collectors.toList());
     }
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
-        if (validate(user)) {
-            user.setId(generateId());
-            users.put(user.getId(), user);
-            log.info("Новый пользователь успешно зарегестрирован {}", user);
-        }
+    public User createUser(@Valid @RequestBody User user) {
+        validate(user);
+        user.setId(generateId());
+        users.put(user.getId(), user);
+        log.info("Новый пользователь успешно зарегестрирован {}", user);
+
         return user;
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
-        if (validate(user)) {
-            if (!users.containsKey(user.getId())) {
-                throw new ValidationException("Пользователь не найден.");
-            }
-            users.put(user.getId(), user);
-            log.info("User {} updated", user);
+    public User updateUser( @Valid @RequestBody User user) {
+        validate(user);
+        if (!users.containsKey(user.getId())) {
+            throw new ValidationException("Пользователь не найден.");
         }
+        users.put(user.getId(), user);
+        log.info("User {} updated", user);
+
         return user;
     }
 
@@ -51,18 +52,13 @@ public class UserController {
         return ++id;
     }
 
-    private boolean validate(User user) {
+    private void validate(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Почта не может быть пустой и должна содержать @");
-        } else if (user.getLogin() == null || user.getLogin().isBlank()) {
-            throw new ValidationException("Логин пустой или содержит в себе пробелы");
-        } else if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
-        return true;
     }
 
 }

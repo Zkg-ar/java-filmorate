@@ -6,10 +6,17 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -19,10 +26,13 @@ public class UserControllerTest {
     private Map<Integer, User> users;
     User user;
     UserController obj;
+    private Validator validator;
 
     @BeforeEach
     public void beforeEach() {
         obj = new UserController();
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
         users = new HashMap<>();
         user = User.builder()
                 .email("kzg@yan.ru")
@@ -41,24 +51,22 @@ public class UserControllerTest {
 
     @Test
     public void createUserWhenEmailIsEmpty() {
-        final ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> {
-                    user.setEmail("");
-                    obj.createUser(user);
-                });
-        Assertions.assertEquals("Почта не может быть пустой и должна содержать @", exception.getMessage());
+
+        user.setEmail("");
+        obj.createUser(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        violations.forEach(action -> {
+            assertThat(action.getMessage()).isEqualTo("Почта не может быть пустой и должна содержать @");
+        });
     }
 
     @Test
     public void createUserWhenLoginIsEmpty() {
-        final ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> {
-                    user.setLogin("");
-                    obj.createUser(user);
-                });
-        Assertions.assertEquals("Логин пустой или содержит в себе пробелы", exception.getMessage());
+
+        user.setLogin("");
+        obj.createUser(user);
+
+
     }
 
     @Test

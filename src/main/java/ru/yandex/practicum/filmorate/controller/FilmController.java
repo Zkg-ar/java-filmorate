@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 import java.util.HashMap;
@@ -18,34 +19,34 @@ import java.util.stream.Collectors;
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
-    Map<Integer, Film> films = new HashMap();
+    private Map<Integer, Film> films = new HashMap();
     private int id = 0;
 
 
     @GetMapping("/films")
-    public List findAll() {
+    public List getFilms() {
         return films.values().stream().collect(Collectors.toList());
     }
 
     @PostMapping("/films")
-    public Film createFilm(@RequestBody Film film) {
-        if (validate(film)) {
-            film.setId(generateId());
-            films.put(film.getId(), film);
-            log.info("Новый пользователь успешно зарегестрирован {}", film);
-        }
+    public Film createFilm(@Valid @RequestBody Film film) {
+        validate(film);
+        film.setId(generateId());
+        films.put(film.getId(), film);
+        log.info("Новый пользователь успешно зарегестрирован {}", film);
+
         return film;
     }
 
     @PutMapping("/films")
-    public Film updateFilm(@RequestBody Film film) {
-        if (validate(film)) {
-            if (!films.containsKey(film.getId())) {
-                throw new ValidationException("Пользователь не найден.");
-            }
-            films.put(film.getId(), film);
-            log.info("Film {} updated", film);
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        validate(film);
+        if (!films.containsKey(film.getId())) {
+            throw new ValidationException("Пользователь не найден.");
         }
+        films.put(film.getId(), film);
+        log.info("Film {} updated", film);
+
         return film;
     }
 
@@ -53,17 +54,10 @@ public class FilmController {
         return ++id;
     }
 
-    private boolean validate(Film film) {
-        if (film.getName() == null || film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
-            throw new ValidationException("Описание фильма не может быть больше 200 символов");
-        } else if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+    private void validate(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза не может быть раньше чем 28.12.1895");
-        } else if (film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
-        return true;
     }
 
 }
