@@ -62,7 +62,7 @@ public class FilmControllerTest {
     @Test
     public void whenDescriptionLengthIsMore200() {
 
-        film.setDescription("Описание".repeat(201));
+        film.setDescription("О".repeat(210));
         obj.createFilm(film);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
