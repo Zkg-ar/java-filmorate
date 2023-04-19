@@ -7,13 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
+
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -43,8 +41,8 @@ public class UserController {
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public Set<Long> getCommonFriends(@PathVariable Integer id,
-                                       @PathVariable Integer otherId) {
-        return service.findCommonFriend(id,otherId);
+                                      @PathVariable Integer otherId) {
+        return service.findCommonFriend(id, otherId);
     }
 
     @PostMapping("/users")
