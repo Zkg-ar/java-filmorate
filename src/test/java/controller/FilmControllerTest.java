@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.filmStorage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -32,14 +36,15 @@ public class FilmControllerTest {
     public void beforeEach() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        obj = new FilmController();
+        FilmService service = new FilmService(new InMemoryFilmStorage(),new InMemoryUserStorage());
+        obj = new FilmController(service);
         films = new HashMap<>();
         film = Film.builder()
                 .name("Avengers.Infinity war")
                 .description("Фильм снятый по комиксам")
                 .duration(120)
                 .releaseDate(LocalDate.of(2018, 4, 29))
-                .build();
+                .id(1).likesCount(1).build();
     }
 
     @Test

@@ -2,54 +2,78 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private Map<Integer, User> users = new HashMap();
-    private int id = 0;
+    private UserService service;
 
+    @Autowired
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @GetMapping("/users")
     public List getUsers() {
-        return users.values().stream().collect(Collectors.toList());
+        return service.getAllUsers();
+    }
+
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable Optional<Integer> id) {
+        return service.findUserById(id.get());
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public Set<Long> getUsersFriends(@PathVariable Integer id) {
+        return service.getUsersFriends(id);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Set<Long> getCommonFriends(@PathVariable Integer id,
+                                       @PathVariable Integer otherId) {
+        return service.findCommonFriend(id,otherId);
     }
 
     @PostMapping("/users")
     public User createUser(@Valid @RequestBody User user) {
         validate(user);
-        user.setId(generateId());
-        users.put(user.getId(), user);
+        service.addUser(user);
         log.info("Новый пользователь успешно зарегестрирован {}", user);
-
         return user;
     }
+
 
     @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user) {
         validate(user);
-        if (!users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь не найден.");
-        }
-        users.put(user.getId(), user);
-        log.info("User {} updated", user);
-
+        service.updateUser(user);
+        log.info("Пользователь {} обновлен", user);
         return user;
     }
 
-    private int generateId() {
-        return ++id;
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addFriends(@PathVariable Optional<Integer> id,
+                           @PathVariable Optional<Integer> friendId) {
+        service.addFriends(id.get(), friendId.get());
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Integer id,
+                             @PathVariable Integer friendId) {
+        service.deleteFriend(id, friendId);
     }
 
     private void validate(User user) {
