@@ -34,10 +34,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film findFilmById(int id) {
-        return films.values().stream()
-                .filter(x -> x.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new FilmNotFoundException("Фильм с id = " + id + " отсутсвует"));
+        if(!films.containsKey(id)){
+            throw new FilmNotFoundException("Фильм с id = " + id + " не существует");
+        }
+        return films.get(id);
     }
 
 
@@ -50,9 +50,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void updateFilm(Film film) {
-        if (!films.values().contains(film)) {
-            throw new FilmNotFoundException("Фильм с id = " + film.getId() + " отсутсвует");
-        }
         films.put(film.getId(), film);
     }
 }

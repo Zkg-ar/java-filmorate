@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.storage.filmStorage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,18 +43,14 @@ public class FilmService {
 
     public Film putLike(int filmId, int userId) {
         checkIdAvailability(filmId, userId);
-        createLikesSet(filmStorage.findFilmById(filmId));
-        filmStorage.findFilmById(filmId).getLikes().add((long) userId);
-
+        filmStorage.findFilmById(filmId).getLikes().add(userId);
+        filmStorage.findFilmById(filmId).setLikesCount(filmStorage.findFilmById(filmId).getLikes().size());
         return filmStorage.findFilmById(filmId);
     }
 
     public void deleteLike(int filmId, int userId) {
         checkIdAvailability(filmId, userId);
-        if (!filmStorage.findFilmById(filmId).getLikes().contains(userId)) {
-            throw new UserNotFoundException("Данный пользователь не ставил лайк на фильм");
-        }
-        filmStorage.findFilmById(filmId).getLikes().remove((long) userId);
+        filmStorage.findFilmById(filmId).getLikes().remove(userId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
@@ -63,14 +58,11 @@ public class FilmService {
             throw new IllegalArgumentException("Введено отрицательное число");
         }
         return filmStorage.getAllFilms().stream()
-                .sorted(Comparator.comparing(Film::getLikesCount))
+                .sorted(Comparator.comparing(Film::getLikesCount).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
-    private void createLikesSet(Film film) {
-        film.setLikes(new HashSet<>());
-    }
 
     private void checkIdAvailability(int filmId, int userId) {
         userStorage.getAllUsers().stream()

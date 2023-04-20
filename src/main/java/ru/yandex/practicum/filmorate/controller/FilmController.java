@@ -26,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("/films")
-    public List getFilms() {
+    public List<Film> getFilms() {
         return service.getAllFilms();
     }
 
@@ -47,7 +47,7 @@ public class FilmController {
     public Film updateFilm(@Valid @RequestBody Film film) {
         validate(film);
         service.updateFilm(film);
-        log.info("Film {} updated", film);
+        log.info("Фильм {} обновлен", film);
         return film;
     }
 
@@ -64,7 +64,7 @@ public class FilmController {
         service.deleteLike(id, userId);
     }
 
-    @GetMapping("/films/popular?count={count}")
+    @GetMapping("/films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
         return service.getPopularFilms(count);
     }

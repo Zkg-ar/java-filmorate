@@ -7,9 +7,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,33 +38,61 @@ public class UserService {
 
 
     public void addFriends(int id, int friendId) {
-        checkIdAvailability(id, friendId);
+        checkIdAvailability(id);
+        checkIdAvailability(friendId);
 
-        storage.findUserById(id).setFriends(new HashSet<>());
-        storage.findUserById(id).getFriends().add((long) friendId);
-        storage.findUserById(friendId).setFriends(new HashSet<>());
-        storage.findUserById(friendId).getFriends().add((long) id);
+        storage.findUserById(id).getFriends().add(friendId);
+        storage.findUserById(friendId).getFriends().add(id);
     }
 
-    public Set<Long> findCommonFriend(int id, int otherId) {
-        checkIdAvailability(id, otherId);
-        return storage.findUserById(id)
+    public List<User> findCommonFriend(int id, int otherId) {
+        checkIdAvailability(id);
+        checkIdAvailability(otherId);
+
+        List<Integer> commons = storage.findUserById(id)
                 .getFriends()
                 .stream()
-                .filter(storage.findUserById(otherId).getFriends()::contains).collect(Collectors.toSet());
-    }
+                .filter(storage.findUserById(otherId).getFriends()::contains).collect(Collectors.toList());
+        List<User> commonsList = new ArrayList<>();
 
-    public Set<Long> getUsersFriends(int id) {
+        for (int i = 0; i < commons.size(); i++) {
+            commonsList.add(storage.findUserById(commons.get(i)));
+        }
+        return commonsList;
+    }
+//
+//    public List<User> findCommonFriend(int id, int otherId) {
+//        checkIdAvailability(id);
+//        checkIdAvailability(otherId);
+//        List<User> commonsList = new ArrayList<>();
+//        for (Integer friendId : storage.findUserById(id).getFriends()) {
+//            User friendById = storage.findUserById(friendId);
+//            commonsList.add(friendById);
+//        }
+//
+//        return commonsList;
+//
+//    }
+
+    public List<User> getUsersFriends(int id) {
+
         storage.getAllUsers().stream()
                 .filter(x -> x.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id = " + id + " не найден"));
 
-        return storage.findUserById(id).getFriends();
+        List<User> friendsList = new ArrayList<>();
+        for (Integer friendId : storage.findUserById(id).getFriends()) {
+            User friendById = storage.findUserById(friendId);
+            friendsList.add(friendById);
+        }
+
+        return friendsList;
     }
 
     public void deleteFriend(int id, int friendId) {
-        checkIdAvailability(id, friendId);
+        checkIdAvailability(id);
+        checkIdAvailability(friendId);
 
         storage.findUserById(id).getFriends().remove(friendId);
         storage.findUserById(friendId).getFriends().remove(id);
@@ -73,14 +100,10 @@ public class UserService {
 
     }
 
-    private void checkIdAvailability(int firstId, int secondId) {
+    private void checkIdAvailability(int id) {
         storage.getAllUsers().stream()
-                .filter(x -> x.getId() == firstId)
+                .filter(x -> x.getId() == id)
                 .findFirst()
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id = " + firstId + " не найден"));
-        storage.getAllUsers().stream()
-                .filter(x -> x.getId() == secondId)
-                .findFirst()
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id = " + secondId + " не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id = " + id + " не найден"));
     }
 }

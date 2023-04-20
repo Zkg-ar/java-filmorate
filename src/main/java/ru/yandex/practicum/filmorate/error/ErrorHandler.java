@@ -18,31 +18,31 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(final UserNotFoundException e) {
-        return new ErrorResponse("Ошибка:", e.getMessage());
+        return new ErrorResponse("Ошибка 404:", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleFilmNotFound(final FilmNotFoundException e) {
-        return new ErrorResponse("Ошибка:", e.getMessage());
+        return new ErrorResponse("Ошибка 404:", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException e) {
-        return new ErrorResponse("Ошибка:", e.getMessage());
+        return new ErrorResponse("Ошибка 500:", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleUserAlreadyExist(final UserAlreadyExistException e) {
-        return new ErrorResponse("Ошибка:", e.getMessage());
+        return new ErrorResponse("Ошибка 409:", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleFilmAlreadyExist(final FilmAlreadyExistException e) {
-        return new ErrorResponse("Ошибка:", e.getMessage());
+        return new ErrorResponse("Ошибка 409:", e.getMessage());
     }
 
 }
