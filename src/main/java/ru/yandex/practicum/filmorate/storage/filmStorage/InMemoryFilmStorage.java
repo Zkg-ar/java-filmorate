@@ -50,7 +50,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void updateFilm(Film film) {
-        films.values().stream().filter(x->x.getId() == film.getId()).findFirst().orElseThrow(()->new FilmNotFoundException("Фильм с id = " + id + " не существует"));
+        films.values().stream().filter(x -> x.getId() == film.getId()).findFirst().orElseThrow(() -> new FilmNotFoundException("Фильм с id = " + id + " не существует"));
         films.put(film.getId(), film);
     }
 }
