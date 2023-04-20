@@ -43,7 +43,6 @@ public class UserControllerTest {
                 .login("kzg")
                 .name("Завен")
                 .birthday(LocalDate.of(1999, 04, 29))
-                .friends(null)
                 .build();
     }
 
