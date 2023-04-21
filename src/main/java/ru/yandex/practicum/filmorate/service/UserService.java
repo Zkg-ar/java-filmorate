@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 
 import java.util.ArrayList;
@@ -12,13 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private UserStorage storage;
-
-    @Autowired
-    public UserService(InMemoryUserStorage storage) {
-        this.storage = storage;
-    }
+    private final UserStorage storage;
 
     public List<User> getAllUsers() {
         return storage.getAllUsers();
@@ -60,27 +55,10 @@ public class UserService {
         }
         return commonsList;
     }
-//
-//    public List<User> findCommonFriend(int id, int otherId) {
-//        checkIdAvailability(id);
-//        checkIdAvailability(otherId);
-//        List<User> commonsList = new ArrayList<>();
-//        for (Integer friendId : storage.findUserById(id).getFriends()) {
-//            User friendById = storage.findUserById(friendId);
-//            commonsList.add(friendById);
-//        }
-//
-//        return commonsList;
-//
-//    }
+
 
     public List<User> getUsersFriends(int id) {
-
-        storage.getAllUsers().stream()
-                .filter(x -> x.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id = " + id + " не найден"));
-
+        findUserById(id);
         List<User> friendsList = new ArrayList<>();
         for (Integer friendId : storage.findUserById(id).getFriends()) {
             User friendById = storage.findUserById(friendId);

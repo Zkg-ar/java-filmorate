@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.error;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +17,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
+        return new ErrorResponse("Ошибка валидации:", e.getMessage());
+    }
+
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(final UserNotFoundException e) {
         return new ErrorResponse("Ошибка 404:", e.getMessage());
@@ -25,6 +33,12 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleFilmNotFound(final FilmNotFoundException e) {
         return new ErrorResponse("Ошибка 404:", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleFilmNotFound(final Exception e) {
+        return new ErrorResponse("Ошибка 500:", e.getMessage());
     }
 
     @ExceptionHandler

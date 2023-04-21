@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -13,15 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class FilmService {
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     public void updateFilm(Film film) {
         filmStorage.updateFilm(film);
@@ -43,8 +38,8 @@ public class FilmService {
 
     public Film putLike(int filmId, int userId) {
         checkIdAvailability(filmId, userId);
-        filmStorage.findFilmById(filmId).getLikes().add(userId);
-        filmStorage.findFilmById(filmId).setLikesCount(filmStorage.findFilmById(filmId).getLikes().size());
+        Film film = filmStorage.findFilmById(filmId);
+        film.getLikes().add(userId);
         return filmStorage.findFilmById(filmId);
     }
 
@@ -57,8 +52,10 @@ public class FilmService {
         if (count < 0) {
             throw new IllegalArgumentException("Введено отрицательное число");
         }
+
+        Comparator<Film> filmLikesComparator = Comparator.comparingInt(film -> film.getLikes().size());
         return filmStorage.getAllFilms().stream()
-                .sorted(Comparator.comparing(Film::getLikesCount).reversed())
+                .sorted(filmLikesComparator.reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }

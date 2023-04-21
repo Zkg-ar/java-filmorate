@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void addFilm(Film film) {
         for (Film film1 : films.values()) {
-            if (film1.getName().equals(film.getName())) {
+            if (film1.getId() == film.getId()) {
                 throw new FilmAlreadyExistException("Такой фильм уже существует");
             }
         }
@@ -45,6 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List getAllFilms() {
         return films.values()
                 .stream()
+                .sorted(Comparator.comparing(film->film.getLikes().size()))
                 .collect(Collectors.toList());
     }
 
