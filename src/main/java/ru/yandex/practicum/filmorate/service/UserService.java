@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.RequestStatus;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.userStorage.UserStorage;
 
 import java.util.ArrayList;
@@ -36,8 +37,8 @@ public class UserService {
         checkIdAvailability(id);
         checkIdAvailability(friendId);
 
-        storage.findUserById(id).getFriends().add(friendId);
-        storage.findUserById(friendId).getFriends().add(id);
+        storage.findUserById(id).getFriends().put(friendId, RequestStatus.Confirmed);
+        storage.findUserById(friendId).getFriends().put(id, RequestStatus.Confirmed);
     }
 
     public List<User> findCommonFriend(int id, int otherId) {
@@ -46,8 +47,9 @@ public class UserService {
 
         List<Integer> commons = storage.findUserById(id)
                 .getFriends()
+                .keySet()
                 .stream()
-                .filter(storage.findUserById(otherId).getFriends()::contains).collect(Collectors.toList());
+                .filter(storage.findUserById(otherId).getFriends().keySet()::contains).collect(Collectors.toList());
         List<User> commonsList = new ArrayList<>();
 
         for (int i = 0; i < commons.size(); i++) {
@@ -60,7 +62,7 @@ public class UserService {
     public List<User> getUsersFriends(int id) {
         findUserById(id);
         List<User> friendsList = new ArrayList<>();
-        for (Integer friendId : storage.findUserById(id).getFriends()) {
+        for (Integer friendId : storage.findUserById(id).getFriends().keySet()) {
             User friendById = storage.findUserById(friendId);
             friendsList.add(friendById);
         }

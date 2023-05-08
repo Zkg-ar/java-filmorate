@@ -37,7 +37,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleFilmNotFound(final Exception e) {
+    public ErrorResponse handle(final Exception e) {
         return new ErrorResponse("Ошибка 500:", e.getMessage());
     }
 
