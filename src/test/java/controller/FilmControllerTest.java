@@ -44,7 +44,8 @@ public class FilmControllerTest {
                 .description("Фильм снятый по комиксам")
                 .duration(120)
                 .releaseDate(LocalDate.of(2018, 4, 29))
-                .id(1).genre(Genre.Action_movie).build();
+                .id(1).build();
+
     }
 
     @Test

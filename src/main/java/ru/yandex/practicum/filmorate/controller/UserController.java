@@ -45,9 +45,8 @@ public class UserController {
     @PostMapping("/users")
     public User createUser(@Valid @RequestBody User user) {
         validate(user);
-        service.addUser(user);
         log.info("Новый пользователь успешно зарегестрирован {}", user);
-        return user;
+        return service.addUser(user);
     }
 
 
