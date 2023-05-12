@@ -49,7 +49,7 @@ public class FilmDbStorage implements FilmStorage {
 
             return ps;
         }, keyHolder);
-        
+
         film.setId(keyHolder.getKey().intValue());
         return film;
     }
@@ -59,7 +59,14 @@ public class FilmDbStorage implements FilmStorage {
         String query = "SELECT films.*,mpa_rating.mpa_rating_name FROM films " +
                 "INNER JOIN mpa_rating ON films.mpa_rating_id = mpa_rating.mpa_rating_id;";
         List<Film> films = jdbcTemplate.query(query, (rs, rowNum) -> makeFilm(rs));
+        films.forEach(film -> film.getGenres().addAll(getFilmsGenreById(film.getId())));
         return films;
+    }
+
+    private List<Genre> getFilmsGenreById(Integer id) {
+        String query = "SELECT DISTINCT * FROM genre RIGHT JOIN film_genre on genre.genre_id = film_genre.genre_id WHERE film_genre.film_id = ?";
+        List<Genre> genres = jdbcTemplate.query(query, (rs, rowNum) -> new Genre(rs.getInt("genre_id"), rs.getString("name")), id);
+        return genres;
     }
 
 
@@ -85,7 +92,7 @@ public class FilmDbStorage implements FilmStorage {
         SqlRowSet rs = jdbcTemplate.queryForRowSet("SELECT films.*,mpa_rating.mpa_rating_name from films,mpa_rating where films.id = ? AND films.mpa_rating_id = mpa_rating.mpa_rating_id", id);
 
         if (rs.next()) {
-            return Film.builder()
+            Film film = Film.builder()
                     .id(rs.getInt("id"))
                     .name(rs.getString("name"))
                     .description(rs.getString("description"))
@@ -94,6 +101,8 @@ public class FilmDbStorage implements FilmStorage {
                     .mpa(new MpaRating(rs.getInt("mpa_rating_id"), rs.getString("mpa_rating_name")))
                     .genres(new ArrayList<>())
                     .build();
+            film.getGenres().addAll(getFilmsGenreById(film.getId()));
+            return film;
         } else {
             throw new FilmNotFoundException("Фильс с id = " + id + " не найден.");
         }
