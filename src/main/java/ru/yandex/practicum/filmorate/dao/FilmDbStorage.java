@@ -49,7 +49,7 @@ public class FilmDbStorage implements FilmStorage {
 
             return ps;
         }, keyHolder);
-
+        
         film.setId(keyHolder.getKey().intValue());
         return film;
     }
@@ -59,15 +59,9 @@ public class FilmDbStorage implements FilmStorage {
         String query = "SELECT films.*,mpa_rating.mpa_rating_name FROM films " +
                 "INNER JOIN mpa_rating ON films.mpa_rating_id = mpa_rating.mpa_rating_id;";
         List<Film> films = jdbcTemplate.query(query, (rs, rowNum) -> makeFilm(rs));
-
         return films;
     }
 
-//    private List<Genre> getGenresByFilmId(){
-//        String query = "SELECT films.*,mpa_rating.mpa_rating_name FROM films " +
-//                "INNER JOIN mpa_rating ON films.mpa_rating_id = mpa_rating.mpa_rating_id;";
-//        List<Film> films = jdbcTemplate.query(query, (rs, rowNum) -> makeFilm(rs));
-//    }
 
     @Override
     public Film updateFilm(Film film) {

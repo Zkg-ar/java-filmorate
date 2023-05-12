@@ -103,7 +103,6 @@ public class UserDbStorage implements UserStorage {
                 "                GROUP BY f.other_user_id\n" +
                 "                HAVING COUNT(f.user_id) > 1;";
         List<User> users = jdbcTemplate.query(query, (rs, rowNum) -> makeUser(rs), id, otherId);
-        System.out.println(users);
         return users;
     }
 
