@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Component("FilmDbStorage")
@@ -110,9 +111,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        String query = "SELECT films.* FROM films INNER JOIN likes ON films.id = likes.film_id\n" +
-                "GROUP BY likes.film_id\n" +
-                "ORDER BY COUNT(likes.user_id) DESC LIMIT ? ;";
+        String query = "SELECT f.*, m.mpa_rating_name\n" +
+                "                        FROM films AS f\n" +
+                "                        INNER JOIN mpa_rating AS m ON f.mpa_rating_id = m.mpa_rating_id\n" +
+                "                        LEFT OUTER JOIN likes AS l ON f.id = l.film_id\n" +
+                "                        GROUP BY f.id, l.user_id\n" +
+                "                        ORDER BY COUNT(l.user_id) DESC\n" +
+                "                        LIMIT ?";
 
         List<Film> popularFilms = jdbcTemplate.query(query, (rs, rowNum) -> makeFilm(rs), count);
 
@@ -123,6 +128,7 @@ public class FilmDbStorage implements FilmStorage {
     public void putLike(int filmId, int userId) {
         String query = "INSERT INTO likes(film_id,user_id) VALUES(?,?);";
         jdbcTemplate.update(query, filmId, userId);
+        findFilmById(filmId).addLike(userId);
     }
 
     @Override
@@ -132,6 +138,7 @@ public class FilmDbStorage implements FilmStorage {
         }
         String query = "DELETE FROM likes WHERE film_id = ? AND user_id = ?;";
         jdbcTemplate.update(query, filmId, userId);
+        findFilmById(filmId).deleteLike(userId);
     }
 
     @Override
@@ -186,6 +193,7 @@ public class FilmDbStorage implements FilmStorage {
                 .mpa(new MpaRating(rs.getInt("mpa_rating_id"), rs.getString("mpa_rating_name")))
                 .genres(new ArrayList<>())
                 .build();
+
     }
 
     private Genre makeGenre(ResultSet rs) throws SQLException {

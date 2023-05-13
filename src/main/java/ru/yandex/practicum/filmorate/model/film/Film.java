@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.model.film;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -27,5 +29,13 @@ public class Film {
     private final Set<Integer> likes = new HashSet<>();
     private List<Genre> genres ;
     private MpaRating mpa;
+
+    public void addLike(Integer userId){
+        likes.add(userId);
+    }
+
+    public void deleteLike(Integer userId){
+        likes.remove(userId);
+    }
 }
 
