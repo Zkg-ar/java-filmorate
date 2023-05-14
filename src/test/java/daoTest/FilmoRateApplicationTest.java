@@ -1,4 +1,4 @@
-package DaoTest;
+package daoTest;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
@@ -31,22 +31,9 @@ class FilmoRateApplicationTest {
     private Film film;
 
     @BeforeEach
-    public void  beforeEach(){
-         user = User.builder()
-                .id(2)
-                .email("kzg@yan.ru")
-                .login("kzg")
-                .name("Завен")
-                .birthday(LocalDate.of(1999, 04, 29))
-                .build();
-        film = Film.builder()
-                .id(1)
-                .name("Avengers.Infinity war")
-                .description("Фильм снятый по комиксам")
-                .releaseDate(LocalDate.of(2018, 4, 29))
-                .duration(120)
-                .mpa(new MpaRating(1,"G"))
-                .build();
+    public void beforeEach() {
+        user = User.builder().id(2).email("kzg@yan.ru").login("kzg").name("Завен").birthday(LocalDate.of(1999, 04, 29)).build();
+        film = Film.builder().id(1).name("Avengers.Infinity war").description("Фильм снятый по комиксам").releaseDate(LocalDate.of(2018, 4, 29)).duration(120).mpa(new MpaRating(1, "G")).build();
     }
 
     @Test
@@ -54,32 +41,29 @@ class FilmoRateApplicationTest {
 
         Optional<User> userOptional = Optional.ofNullable(userStorage.findUserById(1));
 
-        assertThat(userOptional)
-                .isPresent()
-                .hasValueSatisfying(user ->
-                        assertThat(user).hasFieldOrPropertyWithValue("id", 1)
-                );
+        assertThat(userOptional).isPresent().hasValueSatisfying(user -> assertThat(user).hasFieldOrPropertyWithValue("id", 1));
     }
+
     @Test
-    public void testGetAllUsers(){
+    public void testGetAllUsers() {
         userStorage.addUser(user);
 
         List<User> users = userStorage.getAllUsers();
-        Assertions.assertEquals(users.size(),2);
+        Assertions.assertEquals(users.size(), 2);
     }
 
     @Test
-    public void testGetAllFilms(){
+    public void testGetAllFilms() {
         filmStorage.addFilm(film);
 
         List<Film> films = filmStorage.getAllFilms();
-        Assertions.assertEquals(films.size(),2);
+        Assertions.assertEquals(films.size(), 2);
     }
 
     @Test
-    public void testPutLike(){
-        filmStorage.putLike(1,1);
-        Assertions.assertEquals(filmStorage.getPopularFilms(1).size(),1);
+    public void testPutLike() {
+        filmStorage.putLike(1, 1);
+        Assertions.assertEquals(filmStorage.getPopularFilms(1).size(), 1);
     }
 
 //    @Test
@@ -88,7 +72,7 @@ class FilmoRateApplicationTest {
 //    }
 
     @Test
-    public void getGenreById(){
-        Assertions.assertTrue(filmStorage.getGenreById(1).equals(new Genre(1,"Комедия")));
+    public void getGenreById() {
+        Assertions.assertTrue(filmStorage.getGenreById(1).equals(new Genre(1, "Комедия")));
     }
 }
