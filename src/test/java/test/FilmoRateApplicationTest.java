@@ -1,4 +1,4 @@
-package daoTest;
+package test;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
