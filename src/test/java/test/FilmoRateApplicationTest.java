@@ -67,8 +67,8 @@ class FilmoRateApplicationTest {
     }
 
     @Test
-    public void getGenres(){
-        Assertions.assertTrue(filmStorage.getAllGenres().contains(new Genre(1,"Комедия")));
+    public void getGenres() {
+        Assertions.assertTrue(filmStorage.getAllGenres().contains(new Genre(1, "Комедия")));
     }
 
     @Test
