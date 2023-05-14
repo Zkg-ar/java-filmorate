@@ -3,9 +3,6 @@ package ru.yandex.practicum.filmorate.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -78,9 +75,9 @@ public class FilmDbStorage implements FilmStorage {
                 film.getMpa().getId(), film.getId());
 
         if (film.getGenres() != null) {
-            if (film.getGenres().isEmpty()) {
-                jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
-            }
+
+            jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
+
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO film_genre(film_id,genre_id) VALUES(?,?)", film.getId(), genre.getId());
             }
@@ -88,7 +85,7 @@ public class FilmDbStorage implements FilmStorage {
         if (rs == 0) {
             throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
         }
-        return film;
+        return findFilmById(film.getId());
     }
 
     @Override
@@ -103,7 +100,7 @@ public class FilmDbStorage implements FilmStorage {
                     .releaseDate(rs.getDate("release_date").toLocalDate())
                     .duration(rs.getInt("duration"))
                     .mpa(new MpaRating(rs.getInt("mpa_rating_id"), rs.getString("mpa_rating_name")))
-                    .genres(new ArrayList<>())
+                    .genres(new HashSet<>())
                     .build();
             film.getGenres().addAll(getFilmsGenreById(film.getId()));
             return film;
@@ -194,7 +191,7 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .mpa(new MpaRating(rs.getInt("mpa_rating_id"), rs.getString("mpa_rating_name")))
-                .genres(new ArrayList<>())
+                .genres(new HashSet<>())
                 .build();
 
     }
