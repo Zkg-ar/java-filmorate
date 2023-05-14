@@ -78,6 +78,9 @@ public class FilmDbStorage implements FilmStorage {
                 film.getMpa().getId(), film.getId());
 
         if (film.getGenres() != null) {
+            if (film.getGenres().isEmpty()) {
+                jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
+            }
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO film_genre(film_id,genre_id) VALUES(?,?)", film.getId(), genre.getId());
             }
