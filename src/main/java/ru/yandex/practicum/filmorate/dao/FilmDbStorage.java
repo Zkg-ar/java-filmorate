@@ -82,7 +82,7 @@ public class FilmDbStorage implements FilmStorage {
                 jdbcTemplate.update("INSERT INTO film_genre(film_id,genre_id) VALUES(?,?)", film.getId(), genre.getId());
             }
         }
-        if (rs == 0) {
+        if (findFilmById(film.getId())==null) {
             throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
         }
         return findFilmById(film.getId());
