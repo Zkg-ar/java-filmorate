@@ -15,7 +15,7 @@ import java.util.Map;
 @Builder
 public class User {
     private int id;
-    private final Map<Integer,RequestStatus> friends = new HashMap<>();
+    private final Map<Integer, RequestStatus> friends = new HashMap<>();
     @Email
     @NotBlank(message = "Почта не может быть пустой и должна содержать @")
     private String email;
