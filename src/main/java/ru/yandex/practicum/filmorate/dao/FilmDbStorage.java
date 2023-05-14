@@ -19,7 +19,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -82,7 +81,7 @@ public class FilmDbStorage implements FilmStorage {
                 jdbcTemplate.update("INSERT INTO film_genre(film_id,genre_id) VALUES(?,?)", film.getId(), genre.getId());
             }
         }
-        if (findFilmById(film.getId())==null) {
+        if (findFilmById(film.getId()) == null) {
             throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
         }
         return findFilmById(film.getId());
