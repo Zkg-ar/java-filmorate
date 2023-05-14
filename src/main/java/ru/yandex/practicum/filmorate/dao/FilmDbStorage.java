@@ -82,9 +82,8 @@ public class FilmDbStorage implements FilmStorage {
         return findFilmById(film.getId());
     }
 
-    private void filmsWithGenre(Film film){
+    private void filmsWithGenre(Film film) {
         if (film.getGenres() != null) {
-
             jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
 
             for (Genre genre : film.getGenres()) {
@@ -92,6 +91,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
     }
+
     @Override
     public Film findFilmById(int id) {
         SqlRowSet rs = jdbcTemplate.queryForRowSet("SELECT films.*,mpa_rating.mpa_rating_name from films,mpa_rating where films.id = ? AND films.mpa_rating_id = mpa_rating.mpa_rating_id", id);
