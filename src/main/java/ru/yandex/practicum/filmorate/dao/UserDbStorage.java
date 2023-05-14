@@ -47,7 +47,7 @@ public class UserDbStorage implements UserStorage {
     public void updateUser(User user) {
         int rs = jdbcTemplate.update("UPDATE users SET login = ?,name = ?,email = ?,birthday = ? " +
                 "WHERE id = ?;", user.getLogin(), user.getName(), user.getEmail(), user.getBirthday(), user.getId());
-        if (findUserById(user.getId())==null) {
+        if (findUserById(user.getId()) == null) {
             throw new UserNotFoundException("Пользователь с id = " + user.getId() + " не найден.");
         }
     }
