@@ -48,6 +48,7 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
 
         film.setId(keyHolder.getKey().intValue());
+        filmsWithGenre(film);
         return film;
     }
 
@@ -73,6 +74,15 @@ public class FilmDbStorage implements FilmStorage {
                         + "WHERE id = ?;", film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
 
+        filmsWithGenre(film);
+
+        if (findFilmById(film.getId()) == null) {
+            throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
+        }
+        return findFilmById(film.getId());
+    }
+
+    private void filmsWithGenre(Film film){
         if (film.getGenres() != null) {
 
             jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
@@ -81,12 +91,7 @@ public class FilmDbStorage implements FilmStorage {
                 jdbcTemplate.update("INSERT INTO film_genre(film_id,genre_id) VALUES(?,?)", film.getId(), genre.getId());
             }
         }
-        if (findFilmById(film.getId()) == null) {
-            throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
-        }
-        return findFilmById(film.getId());
     }
-
     @Override
     public Film findFilmById(int id) {
         SqlRowSet rs = jdbcTemplate.queryForRowSet("SELECT films.*,mpa_rating.mpa_rating_name from films,mpa_rating where films.id = ? AND films.mpa_rating_id = mpa_rating.mpa_rating_id", id);

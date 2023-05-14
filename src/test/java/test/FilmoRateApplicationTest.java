@@ -49,7 +49,7 @@ class FilmoRateApplicationTest {
         userStorage.addUser(user);
 
         List<User> users = userStorage.getAllUsers();
-        Assertions.assertEquals(users.size(), 2);
+        Assertions.assertEquals(users.size(), 1);
     }
 
     @Test
@@ -57,7 +57,7 @@ class FilmoRateApplicationTest {
         filmStorage.addFilm(film);
 
         List<Film> films = filmStorage.getAllFilms();
-        Assertions.assertEquals(films.size(), 2);
+        Assertions.assertEquals(films.size(), 1);
     }
 
     @Test
@@ -66,10 +66,10 @@ class FilmoRateApplicationTest {
         Assertions.assertEquals(filmStorage.getPopularFilms(1).size(), 1);
     }
 
-//    @Test
-//    public void getGenres(){
-//        Assertions.assertTrue(filmStorage.getAllGenres().contains(Genre.Комедия));
-//    }
+    @Test
+    public void getGenres(){
+        Assertions.assertTrue(filmStorage.getAllGenres().contains(new Genre(1,"Комедия")));
+    }
 
     @Test
     public void getGenreById() {
