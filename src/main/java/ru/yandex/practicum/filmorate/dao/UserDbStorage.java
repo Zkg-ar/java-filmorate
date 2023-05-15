@@ -95,8 +95,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findCommonFriend(int id, int otherId) {
-//        String query = "SELECT * from users WHERE id IN (SELECT other_user_id FROM friends INNER JOIN users u on ? = friends.user_id\n" +
-//                "                                                                   INNER JOIN users u2 on ? = friends.user_id );";
         String query = "SELECT u.* FROM friends f\n" +
                 "                JOIN users u ON f.other_user_id = u.id\n" +
                 "                WHERE f.user_id = ? OR f.user_id = ? AND is_confirm = true\n" +
