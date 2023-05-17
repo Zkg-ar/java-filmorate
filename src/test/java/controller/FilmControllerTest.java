@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.filmStorage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
@@ -44,6 +44,7 @@ public class FilmControllerTest {
                 .duration(120)
                 .releaseDate(LocalDate.of(2018, 4, 29))
                 .id(1).build();
+
     }
 
     @Test
