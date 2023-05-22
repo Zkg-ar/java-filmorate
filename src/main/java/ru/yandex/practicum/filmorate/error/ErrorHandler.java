@@ -42,6 +42,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse otFound(final NotFoundException e) {
+        return new ErrorResponse("Ошибка 404:", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException e) {
         return new ErrorResponse("Ошибка 500:", e.getMessage());

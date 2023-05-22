@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.film.Film;
-import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.filmStorage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.userStorage.InMemoryUserStorage;
@@ -44,7 +43,8 @@ public class FilmControllerTest {
                 .description("Фильм снятый по комиксам")
                 .duration(120)
                 .releaseDate(LocalDate.of(2018, 4, 29))
-                .id(1).genre(Genre.Action_movie).build();
+                .id(1).build();
+
     }
 
     @Test
