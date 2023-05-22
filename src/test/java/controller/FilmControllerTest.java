@@ -3,7 +3,9 @@ package controller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -35,7 +37,7 @@ public class FilmControllerTest {
     public void beforeEach() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        FilmService service = new FilmService(new InMemoryFilmStorage(),new InMemoryUserStorage());
+        FilmService service = new FilmService(new FilmDbStorage(new JdbcTemplate()),new InMemoryUserStorage());
         obj = new FilmController(service);
         films = new HashMap<>();
         film = Film.builder()

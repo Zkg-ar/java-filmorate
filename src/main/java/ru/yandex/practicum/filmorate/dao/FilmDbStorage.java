@@ -72,15 +72,16 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        jdbcTemplate.update("UPDATE films SET name = ?,description = ?,release_date = ?,duration = ?,mpa_rating_id = ? "
-                        + "WHERE id = ?;", film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
-                film.getMpa().getId(), film.getId());
+        if (findFilmById(film.getId()) != null) {
+            jdbcTemplate.update("UPDATE films SET name = ?,description = ?,release_date = ?,duration = ?,mpa_rating_id = ? "
+                            + "WHERE id = ?;", film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
+                    film.getMpa().getId(), film.getId());
 
-        if (film.getGenres() != null) {
-            filmsWithGenre(film.getGenres(), film.getId());
-        }
+            if (film.getGenres() != null) {
+                filmsWithGenre(film.getGenres(), film.getId());
+            }
 
-        if (findFilmById(film.getId()) == null) {
+        } else{
             throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
         }
         return findFilmById(film.getId());
